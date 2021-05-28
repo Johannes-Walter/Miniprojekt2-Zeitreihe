@@ -1,5 +1,4 @@
-salesdata
-;orderId;orderState;customer;product;orderDate;orderAmountInCents;Currency
+test;orderId;orderState;customer;product;orderDate;orderAmountInCents;Currency
 0;4;0;bcbca51791;fe2a87eff5;2019-10-22 15:01:15.607;;USD
 1;15;0;b55cf3f5e6;fe2a87eff5;2019-11-15 11:04:52.019;;USD
 2;24;0;0f29b6affa;fe2a87eff5;2019-11-20 14:52:53.896;;USD
