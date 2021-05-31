@@ -7,23 +7,25 @@ data["orderDate"] = pd.to_datetime(data["orderDate"])
 data["orderDaily"] = pd.to_datetime(data["orderDate"]).dt.date
 
 
-failed_sales = data[data["orderState"] == 2]
+customer_terminated = data[data["orderState"] == 2]
+system_error = data[data["orderState"] == 7]
+successful_sales = data[data['orderState'] == 4]
 
-percentage_failed_sales = len(failed_sales) / len(data)
+''' Aufgabe 1 a) '''
 
+percentage_failed_sales = len(customer_terminated) / len(data)
 print(f"Anteil abgebrochener Verkäufe: {percentage_failed_sales}%")
 
-failed_sales = data[data["orderState"] == 7]
+
+''' Aufgabe 1 b) '''
 
 
 data_grouped = data[data["orderState"] == 4].groupby("orderDaily")
-failed_sales_grouped = failed_sales.groupby("orderDaily")
+failed_sales_grouped = system_error.groupby("orderDaily")
 
-t = data_grouped.count()
-ü = failed_sales_grouped.count()
+failed_sales_stat = failed_sales_grouped.count()
 
-#ü["orderState"].plot()
-top = ü[ü["orderState"] > 10]["orderDate"]
+#failed_sales_stat["orderState"].plot()
+failed_sales_top = failed_sales_stat[failed_sales_stat["orderState"] > 15]["orderDate"]
 
-
-t["orderDate"].plot()
+print(failed_sales_top)
