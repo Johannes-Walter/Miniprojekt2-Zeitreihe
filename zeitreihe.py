@@ -28,4 +28,23 @@ failed_sales_stat = failed_sales_grouped.count()
 #failed_sales_stat["orderState"].plot()
 failed_sales_top = failed_sales_stat[failed_sales_stat["orderState"] > 15]["orderDate"]
 
-print(failed_sales_top)
+# print(failed_sales_top)
+
+print(successful_sales)
+
+''' Aufgabe 2 '''
+
+successful_sales['orderAmountInCents']=successful_sales['orderAmountInCents'].apply(lambda x: x.replace(',','.')).astype(float)
+daily_successful_sales = successful_sales.groupby(["orderDaily"])["orderAmountInCents"].sum()
+# successful_sales['moving_average']=successful_sales['orderAmountInCents'].rolling(50).mean()
+# successful_sales['moving_average'].plot()
+
+daily_successful_sales.plot(kind='')
+
+# daily_successful_sales.rolling(2).mean().plot(kind='line')
+daily_successful_sales.rolling(10).mean().plot(kind='line')
+
+
+''' Aufgabe 3 '''
+
+# daily_successful_sales.
