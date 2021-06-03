@@ -43,23 +43,22 @@ def combine_seasonal_cols(input_df, seasonal_model_results): # add decomposed da
 
 
 def linReg(series):
-    X = series.index.map(dt.datetime.toordinal).to_series().values.reshape(-1, 1) # values converts it into a numpy array
-    Y = series.values.reshape(-1, 1)  # -1 means that calculate the dimension of rows, but have 1 column
+    linReg.X = series.index.map(dt.datetime.toordinal).to_series().values.reshape(-1, 1) # values converts it into a numpy array
+    linReg.Y = series.values.reshape(-1, 1)  # -1 means that calculate the dimension of rows, but have 1 column
     linear_regressor = LinearRegression()  # create object for the class
-    linear_regressor.fit(X, Y)  # perform linear regression
-    Y_pred = linear_regressor.predict(X)  # make predictions
-    plt.scatter(X, Y)
-    plt.plot(X, Y_pred, color='red')
-    plt.show()
+    linear_regressor.fit(linReg.X, linReg.Y)  # perform linear regression
+    linReg.Y_pred = linear_regressor.predict(linReg.X)  # make predictions
+
     return linear_regressor.coef_[0][0], linear_regressor.intercept_[0] # unpack list in list to get int values for further use
 
 
 combine_seasonal_cols(weekly_mean, seas_decomp)
-weekly_mean.drop(['observed'], axis=1, inplace=True)
-print(weekly_mean)
-weekly_mean.plot(xlabel="Weeks", ylabel="Order Amount in Cents")
 
+weekly_mean.drop(['observed'], axis=1, inplace=True)
+weekly_mean.plot(xlabel="Weeks", ylabel="Order Amount in Cents")
+plt.title("Original Analysis", fontweight="bold")
 plt.show()
+
 
 
 ''' ISOLATE DECOMPOSED DATA '''
@@ -74,6 +73,10 @@ trend_clean = trend.dropna()
 
 gradient, y_offset = linReg(trend_clean) # linear regression using the trend from the seasonal decomposition
 
+plt.scatter(linReg.X, linReg.Y)
+plt.plot(linReg.X, linReg.Y_pred, color='red')
+plt.title("Linear Regression on Trend", fontweight="bold")
+plt.show()
 
 
 def createModelData():
@@ -106,7 +109,10 @@ def createModelData():
 # model_df contains linear regression data, seasonality, residual values from the decomposition and the sum of all values
 # for the time of 2019-11-24 to 2022-12-25
 model_df = createModelData()
-model_df[82:].plot() # plotting the second half of 2021 and all of 2022
+
+model_df[82:].plot(xlabel="Weeks", ylabel="Order Amount in Cents") # plotting the second half of 2021 and all of 2022
+plt.title("Forecast using LR & seasonality & residuals", fontweight="bold")
+plt.show()
 
 
 ''' ANALYZE DATA '''
@@ -131,7 +137,6 @@ def comparisons(dataModel, weekly_mean_original):
     print(f'\nExpected growth in sale for 2020 vs 2021: {growth_2020_2021} %')
     print(f'\nExpected growth in sale for 2021 vs 2022: {growth_2021_2022} %')
 
+     
     
 comparisons(model_df, weekly_mean)
-
-plt.show()
