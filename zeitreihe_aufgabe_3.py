@@ -5,11 +5,10 @@ from sklearn.linear_model import LinearRegression
 import datetime as dt
 from itertools import cycle
 
-data = pd.read_csv("salesdata.csv", sep=";", error_bad_lines=False)
+data = pd.read_csv("salesdata.csv", sep=";", decimal=",")
 data["orderDate"] = pd.to_datetime(data["orderDate"])
 data["orderDaily"] = pd.to_datetime(data["orderDate"]).dt.date
 data["orderDaily"] = pd.to_datetime(data["orderDaily"])
-
 
 
 customer_terminated = data[data["orderState"] == 2]
@@ -22,13 +21,13 @@ successful_sales = data[data['orderState'] == 4]
 
 ''' DATA PREPARATION '''
 
-successful_sales['orderAmountInCents']=successful_sales['orderAmountInCents'].apply(lambda x: x.replace(',','.')).astype(float)
 daily_successful_sales = pd.DataFrame(successful_sales.groupby("orderDaily")["orderAmountInCents"].sum())
+
 
 weekly = daily_successful_sales.resample('W') # aggregate data weekly
 weekly_mean = weekly.mean()
 weekly_mean.fillna(0, inplace=True) # remove nan values with 0
-
+print(weekly_mean)
 
 ''' SEASONAL DECOMPOSITION '''
 seas_decomp = seasonal_decompose(weekly_mean, period = 26) # decompose data in a trend, seasonal and residual series
