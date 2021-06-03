@@ -1,7 +1,6 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-import datetime
 
 
 def clean_sales_data(data):
@@ -35,7 +34,7 @@ def plot_bar_chart(subplot, data):
     subplot.plot(data.index, data["orderAmountInCents"].rolling(30).mean(), color="green")
 
 
-def plot_overlaid_halfes(subplot, data, offset=0, width=0.4):
+def plot_sold_amount_monthly(subplot, data, offset=0, width=0.4):
     data = data[data["orderState"] == "4"]
     data.index = pd.to_datetime(data["orderDate"])
     data = data.resample("M").sum()
@@ -55,7 +54,7 @@ def plot_overlaid_halfes(subplot, data, offset=0, width=0.4):
     subplot.legend(["2021", "2020"])
 
 
-def plot_overlaid_all(subplot, data):
+def plot_total_amount_monthly(subplot, data):
     data.index = pd.to_datetime(data["orderDate"])
     data = data.resample("M").sum()
 
@@ -80,12 +79,6 @@ def plot_amount_per_product(subplot, data):
     data = data.groupby("product").sum()
     subplot.bar(data.index, data["orderAmountInCents"])
 
-def plot_amount_per_customer(subplot, data):
-    data = data[data["orderState"] == "4"]
-    data = data.groupby("customer").sum()
-    data = data.sort_values("orderAmountInCents")
-    subplot.bar(data.index, data["orderAmountInCents"])
-
 def plot_relative_failed_sales(subplot, data):
     #df_all = data[data["orderState"] == "4"]
     df_all = data
@@ -101,13 +94,13 @@ def plot_relative_failed_sales(subplot, data):
     failed.reindex(df_all.index)
     print(failed)
     width=0.4
-    subplot.plot(df_all.index, failed["orderAmountInCents"]/df_all["orderAmountInCents"])
+    subplot.bar(df_all.index, failed["orderAmountInCents"]/df_all["orderAmountInCents"])
 
-def plot_products(subplot, data):
+def plot_products_monthly(subplot, data):
     offset = 0.8/len(data["product"].unique())
     i = 0
     for product in data["product"].unique():
-        plot_overlaid(subplot, data[data["product"]==product], i*offset, offset)
+        plot_sold_amount_monthly(subplot, data[data["product"]==product], i*offset, offset)
         i += 1
 
 if __name__ == "__main__":
@@ -128,9 +121,8 @@ if __name__ == "__main__":
     plt.figure(figsize=(20,12), dpi=200)
     sub = plt.subplot()
     #plot_bar_chart(sub, data)
-    #plot_overlaid(sub, data)
-    #plot_overlaid_all(sub, data)
+    #plot_sold_amount_monthly(sub, data)
+    #plot_total_amount_monthly(sub, data)
     #plot_amount_per_product(sub, data)
-    #plot_amount_per_customer(sub, data)
     #plot_relative_failed_sales(sub, data)
-    plot_products(sub, data)
+    plot_products_monthly(sub, data)
